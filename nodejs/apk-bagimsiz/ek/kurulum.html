@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0f1420">
+<title>Patron Direkt - Kurulum</title>
+<script src="cordova.js"></script>
+<script src="core.js"></script>
+<style>
+:root{--bg:#0f1420;--card:#182033;--card2:#1e2840;--tx:#eef2fb;--mut:#8d99b5;--line:#26314b;--gold:#f5b942;--grn:#2fd18b;--red:#ff5d6c;--blu:#4f8dff;--org:#ff9a3d}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font:14px/1.4 -apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:460px;margin:0 auto;padding:22px 18px 40px}
+.logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--gold),#d98a12);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#1b1300;margin:8px auto 10px}
+h1{font-size:20px;text-align:center;margin:0 0 4px}
+.s{color:var(--mut);font-size:13px;text-align:center;margin:0 0 16px;line-height:1.45}
+.steps{display:flex;gap:6px;justify-content:center;margin:0 0 16px}
+.steps i{width:30px;height:5px;border-radius:3px;background:var(--line)}.steps i.on{background:var(--gold)}
+.srv{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;font-weight:700;font-size:15px;cursor:pointer}
+.srv small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.srv .go{margin-left:auto;color:var(--gold);font-size:20px}
+.btn{display:block;width:100%;padding:13px;border:0;border-radius:12px;font-weight:800;font-size:15px;margin-top:10px;background:var(--gold);color:#1b1300}
+.btn:disabled{opacity:.6}
+.btn2{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+.in{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#0c111c;color:var(--tx);font-size:15px}
+.row{display:flex;gap:8px}.row .in:last-child{max-width:96px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 12px}.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
+.note{font-size:12px;color:var(--mut);text-align:center;margin-top:12px;line-height:1.45}
+.err{background:#5a1f2a;color:#ffd6dc;border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0;display:none;line-height:1.4}
+.ok{background:#15402b;color:#b6f0d2;border-radius:10px;padding:9px 12px;font-size:13px;text-align:center;margin-bottom:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:12.5px;color:var(--mut);line-height:1.5}
+.hide{display:none}.hint{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.4}
+a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">P</div>
+  <h1>Patron Direkt</h1>
+  <div class="steps"><i id="st1" class="on"></i><i id="st2"></i></div>
+  <div class="err" id="err"></div>
+
+  <!-- 1) Sunucu bul -->
+  <section id="p1">
+    <p class="s" id="scanText">Aynı Wi-Fi'daki SambaPOS aranıyor…</p>
+    <div class="bar"><i id="scanBar"></i></div>
+    <div id="found"></div>
+    <button class="btn btn2" id="rescan">🔍 Yeniden ara</button>
+    <div class="card">
+      <b style="color:var(--tx)">Adresi elle yazın</b>
+      <label>SambaPOS bilgisayarının adresi</label>
+      <div class="row"><input class="in" id="mHost" placeholder="192.168.1.20 veya sabit IP" autocapitalize="off" autocorrect="off" spellcheck="false"><input class="in" id="mPort" placeholder="9000" inputmode="numeric"></div>
+      <div class="hint">Yerel IP (192.168.x.x), restoranın <b>sabit IP</b>'si veya alan adı yazılabilir. Sabit IP ile dışarıdan bağlanılacaksa modemde 9000 portu kasa bilgisayarına yönlendirilmelidir.</div>
+      <button class="btn" id="mGo">Bağlan</button>
+    </div>
+    <p class="note">Exe veya bulut gerekmez. Patron telefonu ile kasa bilgisayarı aynı ağda olmalı (ya da sabit IP kullanılmalı).</p>
+  </section>
+
+  <!-- 2) Bağlantı kullanıcısı -->
+  <section id="p2" class="hide">
+    <div class="ok">✓ SambaPOS mesaj sunucusu bulundu</div>
+    <p class="s" id="p2srv"></p>
+    <label>Bağlantı kullanıcısı (SambaPOS yönetici kullanıcı adı)</label>
+    <input class="in" id="cUser" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ör. Administrator">
+    <label>Şifresi (SambaPOS'taki "Şifre" alanı, PIN değil)</label>
+    <input class="in" id="cPass" type="password">
+    <button class="btn" id="cGo">Bağlan ve bitir</button>
+    <button class="btn btn2" id="back1">← Sunucu seçimine dön</button>
+    <div class="card">Bu kullanıcı telefonun SambaPOS'a bağlanması içindir ve <b>Yönetici (Admin) rolünde</b> olmalıdır (patron raporları yalnızca yöneticiye açıktır). Patron sonra kendi PIN'iyle girer. SambaPOS'ta bir kez oluşturulur, "Şifre" alanı doldurulur.</div>
+  </section>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var pending = null, scanning = false;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function err(m) { var e = $('err'); if (!m) { e.style.display = 'none'; return; } e.textContent = m; e.style.display = 'block'; window.scrollTo(0, 0); }
+  function show(n) { $('p1').className = n === 1 ? '' : 'hide'; $('p2').className = n === 2 ? '' : 'hide'; $('st2').className = n >= 2 ? 'on' : ''; err(null); }
+  function busy(b, on, t) { b.disabled = on; if (t) b.textContent = t; }
+
+  function addFound(host, port) {
+    var b = document.createElement('button'); b.className = 'srv';
+    b.innerHTML = '🖥️<span>' + esc(host) + '<small>SambaPOS mesaj sunucusu · port ' + esc(port) + '</small></span><span class="go">›</span>';
+    b.onclick = function () { pick({ host: host, port: port }); };
+    $('found').appendChild(b);
+  }
+  function scan() {
+    if (scanning) return; scanning = true;
+    $('found').innerHTML = ''; $('scanBar').style.width = '0'; $('scanText').textContent = 'Aynı Wi-Fi\'daki SambaPOS aranıyor…';
+    var port = parseInt($('mPort').value, 10) || 9000, n = 0;
+    BG.scan(port, function (h, p) { n++; addFound(h, p); }, function (r) {
+      scanning = false; $('scanBar').style.width = '100%';
+      if (!r.scanned) { $('scanText').innerHTML = 'Telefonun Wi-Fi adresi alınamadı. Wi-Fi\'a bağlı olun ya da adresi elle yazın.'; return; }
+      $('scanText').innerHTML = n ? n + ' SambaPOS bulundu. Dokunarak seçin.' : 'Bu ağda SambaPOS bulunamadı (' + esc(r.ip) + '). SambaPOS açık mı, 9000 portu açık mı? Adresi elle de yazabilirsiniz.';
+    }, function (d, t) { $('scanBar').style.width = Math.round(d * 100 / t) + '%'; });
+  }
+  function pick(c) {
+    err(null); var base = BG.base(c);
+    $('scanText').textContent = base.replace(/^https?:\/\//, '') + ' deneniyor…';
+    BG.probe(base, 5000, function (ok) {
+      if (!ok) { err(base.replace(/^https?:\/\//, '') + ' adresinde SambaPOS mesaj sunucusu cevap vermedi.'); $('scanText').textContent = ''; return; }
+      pending = { host: c.host, port: c.port }; var old = BG.conn();
+      $('cUser').value = (old && old.user) || ''; $('cPass').value = '';
+      $('p2srv').textContent = base.replace(/^https?:\/\//, ''); show(2);
+    });
+  }
+  $('rescan').onclick = scan;
+  $('mGo').onclick = function () { var p = BG.parseHost($('mHost').value, $('mPort').value); if (!p) { err('Adres yazın.'); return; } pick(p); };
+  $('back1').onclick = function () { show(1); };
+
+  $('cGo').onclick = function () {
+    var user = $('cUser').value.trim(), pass = $('cPass').value;
+    if (!user || !pass) { err('Kullanıcı adı ve şifre gerekli.'); return; }
+    var c = { host: pending.host, port: pending.port, user: user, pass: pass };
+    busy($('cGo'), true, 'Bağlanıyor…');
+    BG.login(c, function (e) {
+      if (e) { busy($('cGo'), false, 'Bağlan ve bitir'); err(e); return; }
+      BG.jset('bgConn', c); BG.jset('bgTok', null);
+      // Yonetici yetkisini hemen dogrula (getUser izni) - degilse net uyari ver
+      BG.gql('{r:getUserRoles{id}}', function (e2) {
+        busy($('cGo'), false, 'Bağlan ve bitir');
+        if (e2 && /yönetici|authorization|auth-required/i.test(e2)) { err('Bağlandı ama bu kullanıcının yönetici yetkisi yok, raporlar okunamaz. SambaPOS\'ta bu kullanıcıyı Yönetici (Admin) rolüne alın.'); return; }
+        BG.jset('bgSession', null);
+        location.replace('index.html');
+      });
+    });
+  };
+
+  var c = BG.conn(); if (c) { $('mHost').value = c.host || ''; $('mPort').value = c.port || ''; }
+  document.addEventListener('deviceready', scan, false);
+  setTimeout(function () { if (!window.cordova || !window.networkinterface) scan(); }, 1500);
+})();
+</script>
+</body>
+</html>

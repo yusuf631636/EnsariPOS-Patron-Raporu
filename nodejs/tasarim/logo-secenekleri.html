@@ -1,0 +1,60 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+body{margin:0;background:#eef0f4;font-family:Segoe UI,Arial,sans-serif;padding:28px;width:1100px}
+.row{display:flex;gap:36px;justify-content:center}
+.card{background:#fff;border-radius:18px;padding:22px 26px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.card h2{margin:14px 0 4px;font-size:26px;color:#1a2238}.card p{margin:0;color:#666;font-size:14px}
+.small{display:flex;gap:14px;justify-content:center;align-items:end;margin-top:14px}
+.phone{background:#1b1f27;border-radius:14px;padding:12px 10px 8px;margin-top:14px;display:flex;flex-direction:column;align-items:center;color:#fff;font-size:13px}
+.phone svg{margin-bottom:5px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".55" stop-color="#f4bb3a"/><stop offset="1" stop-color="#d98f12"/></linearGradient>
+  <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c2a55"/><stop offset="1" stop-color="#0b1128"/></linearGradient>
+  <linearGradient id="blk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#23262e"/><stop offset="1" stop-color="#0c0d11"/></linearGradient>
+  <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb2ff"/><stop offset="1" stop-color="#3f7fe8"/></linearGradient>
+
+  <!-- A: Tac + yukselen grafik -->
+  <g id="A">
+    <rect width="512" height="512" rx="112" fill="url(#navy)"/>
+    <path d="M150 196 L178 108 L226 160 L256 92 L286 160 L334 108 L362 196 Z" fill="url(#gold)"/>
+    <rect x="146" y="196" width="220" height="26" rx="8" fill="url(#gold)"/>
+    <circle cx="178" cy="104" r="12" fill="#ffe08a"/><circle cx="256" cy="86" r="13" fill="#ffe08a"/><circle cx="334" cy="104" r="12" fill="#ffe08a"/>
+    <rect x="132" y="330" width="52" height="80" rx="12" fill="url(#blue)" opacity=".75"/>
+    <rect x="206" y="290" width="52" height="120" rx="12" fill="url(#blue)" opacity=".85"/>
+    <rect x="280" y="258" width="52" height="152" rx="12" fill="url(#blue)"/>
+    <rect x="354" y="300" width="52" height="110" rx="12" fill="url(#blue)" opacity=".85" transform="translate(0,0)"/>
+    <rect x="118" y="424" width="302" height="10" rx="5" fill="#ffffff" opacity=".25"/>
+  </g>
+
+  <!-- B: Patron (takim elbise + kravat) ve yukselen ok -->
+  <g id="B">
+    <rect width="512" height="512" rx="112" fill="url(#blk)"/>
+    <circle cx="210" cy="176" r="66" fill="#f3f5f7"/>
+    <path d="M90 440 Q90 290 210 276 Q330 290 330 440 Z" fill="#f3f5f7"/>
+    <path d="M168 282 L210 330 L252 282 Z" fill="#12151a"/>
+    <path d="M210 312 L196 336 L210 420 L224 336 Z" fill="url(#gold)"/>
+    <path d="M300 356 L352 300 L386 330 L438 262" stroke="url(#gold)" stroke-width="26" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M402 250 L452 248 L448 298 Z" fill="#f4bb3a"/>
+  </g>
+
+  <!-- C: Altin "P" + tac noktasi, icinde grafik -->
+  <g id="C">
+    <rect width="512" height="512" rx="112" fill="url(#navy)"/>
+    <path d="M168 420 L168 110 L292 110 A96 96 0 0 1 292 302 L234 302" stroke="url(#gold)" stroke-width="60" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="258" y="176" width="24" height="60" rx="8" fill="#7fb2ff"/><rect x="296" y="150" width="24" height="86" rx="8" fill="#7fb2ff"/>
+    <path d="M196 64 L212 34 L228 54 L244 28 L260 54 L276 34 L292 64 Z" fill="#ffe08a"/>
+  </g>
+</defs></svg>
+<div class="row">
+  <div class="card"><svg width="260" height="260" viewBox="0 0 512 512"><use href="#A"/></svg><h2>Seçenek 1</h2><p>Altın taç + yükselen satış grafiği</p>
+    <div class="small"><svg width="96" height="96" viewBox="0 0 512 512"><use href="#A"/></svg><svg width="48" height="48" viewBox="0 0 512 512"><use href="#A"/></svg></div>
+    <div class="phone"><svg width="58" height="58" viewBox="0 0 512 512"><use href="#A"/></svg>Patron</div></div>
+  <div class="card"><svg width="260" height="260" viewBox="0 0 512 512"><use href="#B"/></svg><h2>Seçenek 2</h2><p>Takım elbiseli patron + altın kravat, yükselen ok</p>
+    <div class="small"><svg width="96" height="96" viewBox="0 0 512 512"><use href="#B"/></svg><svg width="48" height="48" viewBox="0 0 512 512"><use href="#B"/></svg></div>
+    <div class="phone"><svg width="58" height="58" viewBox="0 0 512 512"><use href="#B"/></svg>Patron</div></div>
+  <div class="card"><svg width="260" height="260" viewBox="0 0 512 512"><use href="#C"/></svg><h2>Seçenek 3</h2><p>Altın "P" harfi, tepesinde taç, içinde grafik</p>
+    <div class="small"><svg width="96" height="96" viewBox="0 0 512 512"><use href="#C"/></svg><svg width="48" height="48" viewBox="0 0 512 512"><use href="#C"/></svg></div>
+    <div class="phone"><svg width="58" height="58" viewBox="0 0 512 512"><use href="#C"/></svg>Patron</div></div>
+</div>
+</body></html>

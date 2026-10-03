@@ -1,0 +1,6 @@
+{
+  "_nasil_kullanilir": "Bu dosyayi 'ddns.json' olarak kopyalayip asagidaki alanlari doldurun, sonra Ensari POS Patron'u yeniden baslatin. Detay: README-KURULUM.txt bolum 8.",
+  "enabled": false,
+  "subdomain": "restoraniniz",
+  "token": "DUCKDNS_TOKEN_BURAYA"
+}

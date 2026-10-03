@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Şimdiki Patron paneli (örnek veri)</title>
+<link rel="stylesheet" href="../../1-Bulut/public/shared.css">
+</head><body>
+<!-- patron2.ornek-alanadi.com'un BUGUNKU hali - ayni shared.css + snapshot.js, sadece ornek veriyle -->
+<div id="app">
+  <div class="topbar"><h1>Öz Urfa Yusuf Usta — Patron Raporu</h1><div style="display:flex;gap:8px"><button class="btn small">🌙</button><button class="btn small">Çıkış</button></div></div>
+  <div class="wrap">
+    <div class="segbar">
+      <button class="seg active">Genel</button><button class="seg">Açık</button><button class="seg">Saatlik</button><button class="seg">Ürünler</button><button class="seg">Ödemeler</button>
+      <button class="seg">Kuryeler</button><button class="seg">Adisyonlar</button><button class="seg">Fiyat</button><button class="seg">Geçmiş</button><button class="seg">İndirmeler</button>
+    </div>
+    <div id="summaryBox"></div>
+  </div>
+</div>
+<script src="../../1-Bulut/public/snapshot.js"></script>
+<script src="ornek-veri.js"></script>
+<script>
+  document.getElementById('summaryBox').innerHTML = renderSnapshot(ORNEK.data, ORNEK.updatedAt);
+  document.querySelectorAll('.snap-section').forEach(el => { el.hidden = el.dataset.section !== 'genel'; });
+</script>
+</body></html>

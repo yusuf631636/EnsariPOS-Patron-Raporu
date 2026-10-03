@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><title>Patron v2 - Samba tarzı önizleme</title>
+<style>
+:root{--bg:#2b3a4a;--bg2:#243241;--card:#f7f9fc;--btn:#35679a;--btn2:#2d5a88;--line:#d7e0ea;--ink:#1d2a38;--mut:#6b7a8a;--good:#1fa85a;--gold:#f4bb3a;--red:#e2434f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#10161d;font-family:"Segoe UI",Roboto,system-ui,sans-serif;padding:24px 18px;color:#fff}
+.stage{display:flex;gap:20px;justify-content:center;align-items:flex-start}
+.col{display:flex;flex-direction:column;align-items:center;gap:9px}
+.cap{font-size:15px;font-weight:700}.cap small{display:block;font-weight:400;color:#9fb0c2;font-size:12px;text-align:center;margin-top:2px}
+.phone{width:350px;height:740px;background:var(--bg);border-radius:30px;border:1px solid #3d4f63;overflow:hidden;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 12px;background:var(--bg2)}
+.bar .t{display:flex;align-items:center;gap:9px;font-size:18px;font-weight:700}.bar .t img,.bar .t .lg{width:32px;height:32px;border-radius:9px}
+.bar .r{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#cfe0f1}
+.sw{width:38px;height:22px;border-radius:12px;background:var(--good);position:relative}.sw:after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.ib{width:34px;height:34px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ex{background:rgba(226,67,79,.18);color:#ff9aa2;border:1px solid rgba(226,67,79,.5);padding:6px 10px;border-radius:9px;font-weight:700;font-size:12.5px}
+.body{flex:1;overflow:hidden;padding:12px}
+.kasa{background:#3d5064;border-radius:14px;padding:10px;margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.kasa .h{background:#8db4dc;color:#1d2a38;text-align:center;font-weight:700;font-size:17px;border-radius:9px;padding:6px;margin-bottom:9px}
+.kasa .g{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.kasa .v{background:var(--card);border-radius:10px;color:var(--ink);text-align:center;padding:8px 6px}
+.kasa .v div{padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}.kasa .v div:last-child{border:0}
+.kasa .v b{display:block;color:var(--good);font-size:17px}
+.kasa .ph{border-radius:10px;background:linear-gradient(160deg,#6b4a2b,#2d1d12);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ffd9a0;font-weight:700;font-size:13px;text-align:center;gap:6px}
+.kasa .ph .emo{font-size:40px}
+.kasa .f{display:flex;justify-content:space-between;background:var(--card);color:var(--ink);border-radius:9px;padding:7px 10px;margin-top:9px;font-size:12.5px}.kasa .f b{color:var(--good)}
+.mini{background:#34475b;border-radius:12px;padding:10px 12px;font-size:12.5px;color:#d6e3f0;margin-bottom:10px;display:flex;justify-content:space-between}
+.mini b{color:#8ff0b9}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.quick div{background:linear-gradient(#4a6582,#34495e);border-radius:11px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;border:1px solid #56708c}
+.quick div span{font-size:10.5px;color:#d6e3f0;margin-top:2px}
+.rb{display:flex;align-items:center;background:var(--btn);border-radius:10px;margin-bottom:7px;overflow:hidden;border:1px solid #4577aa;height:44px}
+.rb i{width:44px;height:100%;background:#d9e2ec;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:19px}
+.rb span{padding-left:12px;font-size:15px}
+.rb.new span:after{content:"YENİ";background:var(--gold);color:#111;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:7px;vertical-align:middle}
+.rh{background:#5a88b8;border:2px solid #1d2a38;border-radius:10px;text-align:center;padding:8px;margin-bottom:10px;font-size:15px;font-weight:600;line-height:1.35}
+.rh small{display:block;font-size:12px;opacity:.85;font-weight:400}
+.tb{background:#dce8f5;border-radius:10px;overflow:hidden;margin-bottom:10px;color:var(--ink)}
+.tb .th{background:#1f6fcf;color:#fff;text-align:center;font-weight:700;font-size:13.5px;padding:6px}
+.tb .tr{display:grid;grid-template-columns:1.4fr 1fr 1fr;border-top:1px solid #b9cbe0;font-size:13px}
+.tb .tr div{padding:6px 8px;border-right:1px solid #b9cbe0}.tb .tr div:last-child{border:0;text-align:right}
+.tb .tr .pc{position:relative}.tb .tr .pc em{position:absolute;left:0;top:0;bottom:0;background:rgba(31,111,207,.18)}
+.tb .tot{font-weight:700;background:#c8dbef}
+.nt{background:#f2f4f7;color:#1d2a38;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:12.5px}
+.nt .h{display:flex;justify-content:space-between;font-weight:700;font-size:13.5px;margin-bottom:3px}.nt .h span{font-weight:400;color:var(--mut);font-size:11px}
+.nt .b{display:flex;gap:8px;margin-top:7px}.nt .b div{padding:5px 14px;border-radius:14px;background:#e3e7ec;font-weight:700;font-size:12px}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg2);padding:8px 2px 12px;border-top:1px solid #3d4f63}
+.nav div{text-align:center;font-size:10.5px;color:#9fb0c2}.nav b{display:block;font-size:18px;font-weight:400}.nav .on{color:#8db4dc;font-weight:700}
+</style></head><body>
+<div class="stage">
+
+<div class="col"><div class="cap">1 · Ana sayfa<small>kasa kartı: ödeme türleri, restoran fotoğrafı, lisans</small></div>
+<div class="phone">
+  <div class="bar"><div class="t"><img src="../logo/png/icon-192.png">Patron</div><div class="r">Yenile <span class="sw"></span><span class="ex">Çıkış</span></div></div>
+  <div class="body">
+    <div class="kasa"><div class="h">Öz Urfa Yusuf Usta</div>
+      <div class="g"><div class="v"><div>Nakit<b>5.980,00</b></div><div>Kredi Kartı<b>11.240,00</b></div><div>Yemek Kartı<b>1.230,00</b></div></div>
+        <div class="ph"><span class="emo">🍢</span>Restoran fotoğrafınız<br><span style="font-weight:400;font-size:11px;opacity:.8">(panelden yüklenir)</span></div></div>
+      <div class="f"><span>Lisans: <b>AKTİF</b></span><span>Bitiş: <b>14.09.2027</b></span></div></div>
+    <div class="mini"><span>Bugün toplam <b>18.450 ₺</b></span><span>dün bu saate göre <b>▲ %27,9</b></span></div>
+    <div class="mini"><span>Açık masa <b style="color:#ffd27a">4</b> · paket <b style="color:#ffd27a">2</b></span><span>adisyon <b>142</b></span></div>
+    <div class="mini" style="background:rgba(226,67,79,.18);color:#ffc0c5"><span>⚠ Bugün 1 iptal, 1 iade</span><span>275 ₺</span></div>
+  </div>
+  <div class="nav"><div class="on"><b>🏠</b>Ana Sayfa</div><div><b>🍽</b>Canlı</div><div><b>📋</b>Raporlar</div><div><b>🏷</b>Fiyat</div><div><b>🔔</b>Bildirim</div></div>
+</div></div>
+
+<div class="col"><div class="cap">2 · Raporlar<small>büyük düğmeli rapor menüsü</small></div>
+<div class="phone">
+  <div class="bar"><div class="t">📋 Raporlar</div><div class="r"><span class="ex">Çıkış</span></div></div>
+  <div class="body">
+    <div class="quick"><div>🏷<span>Fiyatlar</span></div><div>🏢<span>Anlık durum</span></div><div>🍽<span>Açık masalar</span></div></div>
+    <div class="rb"><i>🗄</i><span>Kasa Raporu</span></div>
+    <div class="rb"><i>🌓</i><span>Gün Sonu Raporu</span></div>
+    <div class="rb"><i>🥗</i><span>Ürün Satış Raporu</span></div>
+    <div class="rb new"><i>💱</i><span>İskonto ve Yuvarlama</span></div>
+    <div class="rb new"><i>📜</i><span>İkram - İade - Zayi</span></div>
+    <div class="rb new"><i>💳</i><span>Kullanıcı Tahsilat</span></div>
+    <div class="rb"><i>📉</i><span>Personel Satış Oranları</span></div>
+    <div class="rb"><i>📈</i><span>Saatlik Ciro Oranları</span></div>
+    <div class="rb new"><i>🕓</i><span>Saatlik Ürün Satış</span></div>
+    <div class="rb"><i>💰</i><span>Departman Raporu</span></div>
+    <div class="rb new"><i>📛</i><span>İptal / İade Adisyonlar</span></div>
+    <div class="rb new"><i>🛵</i><span>Paketçi Raporu</span></div>
+  </div>
+  <div class="nav"><div><b>🏠</b>Ana Sayfa</div><div><b>🍽</b>Canlı</div><div class="on"><b>📋</b>Raporlar</div><div><b>🏷</b>Fiyat</div><div><b>🔔</b>Bildirim</div></div>
+</div></div>
+
+<div class="col"><div class="cap">3 · Rapor sayfası<small>tarih kutusu, mavi başlıklı tablolar, % payı</small></div>
+<div class="phone">
+  <div class="bar"><div class="t">‹ Ürün Satış Raporu</div><div class="r"><span class="ib">📤</span><span class="ib">⟳</span></div></div>
+  <div class="body">
+    <div class="rh">Çar, 24 Eyl 2026 00:00<br>Sal, 30 Eyl 2026 20:15<small>dokunun: Bugün · Dün · 7 gün · 30 gün · Özel</small></div>
+    <div class="tb"><div class="th">Ürün Grubu Bazında Satış Tutarları</div>
+      <div class="tr"><div>KEBAPLAR</div><div class="pc"><em style="width:44%"></em>43,7 %</div><div>53.720</div></div>
+      <div class="tr"><div>PİDELER</div><div class="pc"><em style="width:22%"></em>21,9 %</div><div>26.940</div></div>
+      <div class="tr"><div>İÇECEKLER</div><div class="pc"><em style="width:14%"></em>14,2 %</div><div>17.470</div></div>
+      <div class="tr"><div>TATLILAR</div><div class="pc"><em style="width:9%"></em>9,1 %</div><div>11.190</div></div>
+      <div class="tr tot"><div>Toplam</div><div></div><div>123.050</div></div></div>
+    <div class="tb"><div class="th">Ürün - Adet - Tutar</div>
+      <div class="tr"><div>Adana Kebap</div><div>448</div><div>35.840</div></div>
+      <div class="tr"><div>İskender</div><div>287</div><div>27.265</div></div>
+      <div class="tr"><div>Lahmacun</div><div>616</div><div>18.480</div></div>
+      <div class="tr"><div>Beyti Kebap</div><div>154</div><div>14.630</div></div></div>
+  </div>
+  <div class="nav"><div><b>🏠</b>Ana Sayfa</div><div><b>🍽</b>Canlı</div><div class="on"><b>📋</b>Raporlar</div><div><b>🏷</b>Fiyat</div><div><b>🔔</b>Bildirim</div></div>
+</div></div>
+
+<div class="col"><div class="cap">4 · Bildirimler<small>iptal, iskonto, ikram, iade, gün sonu</small></div>
+<div class="phone">
+  <div class="bar"><div class="t">🔔 Bildirimler</div><div class="r">Anlık bildirim <span class="sw"></span></div></div>
+  <div class="body">
+    <div class="nt"><div class="h">❌ İptal · Fiş 131 <span>19:22</span></div>180,00 ₺ — Müşteri vazgeçti · Kullanıcı: Mehmet</div>
+    <div class="nt"><div class="h">💸 İskonto · Fiş 125 <span>18:41</span></div>25 nolu adisyonda -12,00 ₺ iskonto · Ayşe</div>
+    <div class="nt"><div class="h">🧡 İkram · Fiş 118 <span>18:02</span></div>1 × Künefe ikram edildi · Mehmet</div>
+    <div class="nt"><div class="h">↩ İade · Fiş 58 <span>13:05</span></div>95,00 ₺ — Yanlış ürün · Ali</div>
+    <div class="nt"><div class="h">🌓 Gün başı yapıldı <span>09:12</span></div>İş günü 41 başladı · Administrator</div>
+    <div class="nt" style="border:2px dashed #b9c6d4;background:#eef2f6"><div class="h">✔ İptal onayı <span style="color:#b07a00;font-weight:700">sonraki aşama</span></div>Masa 4'te 640 ₺ adisyon iptal edilecek, onaylıyor musunuz?<div class="b"><div style="color:var(--red)">Reddet</div><div style="color:var(--good)">Onayla</div></div></div>
+  </div>
+  <div class="nav"><div><b>🏠</b>Ana Sayfa</div><div><b>🍽</b>Canlı</div><div><b>📋</b>Raporlar</div><div><b>🏷</b>Fiyat</div><div class="on"><b>🔔</b>Bildirim</div></div>
+</div></div>
+
+</div></body></html>

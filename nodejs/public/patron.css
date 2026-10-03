@@ -1,0 +1,255 @@
+/* Ensari POS Patron - telefon icin mobil oncelikli patron modulu. */
+:root{
+  color-scheme:dark;
+  --plane:#0d0d0d;--surface:#1a1a19;--surface-2:#232322;--line:rgba(255,255,255,.10);
+  --grid:#2c2c2a;--axis:#383835;--wash:rgba(255,255,255,.06);
+  --blur1:rgba(13,13,13,.86);--blur2:rgba(13,13,13,.94);
+  --ink:#ffffff;--ink-2:#c3c2b7;--muted:#898781;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;
+  --good:#0ca30c;--warn:#fab219;--serious:#ec835a;--critical:#d03b3b;
+  --pad:14px;--r:16px;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --tabbar:calc(60px + env(safe-area-inset-bottom,0px));
+}
+/* Acik tema - ayni roller, aydinlik yuzeyler icin yeniden basamaklandi.
+   Kategorik renkler dataviz paletinin dogrulanmis acik-mod degerleridir. */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --plane:#f4f4f2;--surface:#ffffff;--surface-2:#f1f1ee;--line:rgba(11,11,11,.10);
+  --grid:#e4e3de;--axis:#c9c7bd;--wash:rgba(11,11,11,.06);
+  --blur1:rgba(244,244,242,.86);--blur2:rgba(244,244,242,.94);
+  --ink:#0b0b0a;--ink-2:#4b4a45;--muted:#83817a;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* Kendi display kurallarimiz UA'nin [hidden] kuralini eziyor; geri aliyoruz. */
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--plane);color:var(--ink);
+  font:15px/1.45 var(--sans);-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--tabbar) + 18px);overscroll-behavior-y:contain;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.01em}
+table{border-collapse:collapse;width:100%}
+
+/* ---------- ust bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;
+  padding:calc(env(safe-area-inset-top,0px) + 10px) var(--pad) 10px;
+  background:var(--blur1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+.brand h1{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(12,163,12,.18)}
+.dot.off{background:var(--critical);box-shadow:0 0 0 3px rgba(208,59,59,.18)}
+.dot.wait{background:var(--warn);box-shadow:0 0 0 3px rgba(250,178,25,.18)}
+.icon-btn{position:relative;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--surface-2);color:var(--ink-2)}
+.icon-btn:active{background:#2e2e2c}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn b{
+  position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;
+  display:grid;place-items:center;border-radius:10px;border:2px solid var(--plane);
+  background:var(--critical);color:#fff;font-size:11px;font-weight:700;
+}
+.spin{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- tarih filtresi (tum gorunumleri kapsar) ---------- */
+.rangebar{
+  position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:29;
+  display:flex;gap:7px;padding:10px var(--pad);overflow-x:auto;scrollbar-width:none;
+  background:var(--blur1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.rangebar::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:8px 14px;min-height:36px;border-radius:999px;
+  background:var(--surface-2);color:var(--ink-2);font-size:13px;font-weight:500;
+}
+.chip.active{background:var(--s1);color:#06121f;font-weight:600}
+/* Saat filtresi tarih araligi chip'lerinden AYRI, tikayici olmayan bir filtre -
+   bu yuzden aktifken farkli renkte (uyari sarisi) vurgulanir, mavi (tarih
+   secimi) ile karismasin diye. */
+.hour-chip.active{background:var(--warn);color:#1a1200;font-weight:600}
+.rangelabel{margin:10px var(--pad) 0;color:var(--muted);font-size:12px}
+.err{
+  margin:10px var(--pad);padding:11px 13px;border-radius:12px;
+  background:rgba(208,59,59,.13);border:1px solid rgba(208,59,59,.35);color:#f6c9c9;font-size:13px;
+}
+
+/* ---------- gorunumler ---------- */
+.view{display:none;padding:12px var(--pad) 0}
+.view.active{display:block}
+.stale{opacity:.45;transition:opacity .15s}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:11px}
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.head h2{font-size:15px}
+.head .sub{color:var(--muted);font-size:12px;white-space:nowrap}
+.linkbtn{color:var(--s1);font-size:12px;font-weight:600;padding:4px 0}
+.empty{color:var(--muted);font-size:13px;padding:14px 0;text-align:center}
+
+/* ---------- kahraman rakam ---------- */
+.hero{background:linear-gradient(160deg,#20201f,#171716);border:1px solid var(--line);border-radius:var(--r);padding:18px 16px;margin-bottom:11px}
+.hero .lbl{color:var(--muted);font-size:12px;letter-spacing:.02em}
+.hero .fig{margin:6px 0 0;font-size:clamp(38px,12vw,52px);font-weight:600;line-height:1.05;letter-spacing:-.03em}
+.hero .fig small{font-size:.42em;font-weight:500;color:var(--ink-2);letter-spacing:0}
+.delta{display:inline-flex;align-items:center;gap:6px;margin-top:11px;padding:5px 10px;border-radius:999px;background:var(--surface-2);font-size:12.5px;font-weight:600}
+.delta .arrow{font-size:11px}
+.delta.up{color:var(--good)}
+.delta.down{color:var(--critical)}
+.delta.flat{color:var(--ink-2)}
+.delta em{font-style:normal;font-weight:400;color:var(--muted)}
+:root[data-theme="light"] .hero{background:linear-gradient(160deg,#ffffff,#f1f0ea)}
+.hero-pay{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.hero-pay span{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--surface-2);font-size:12px;color:var(--ink-2)}
+.hero-pay span b{color:var(--ink);font-weight:600}
+.hero-pay i{width:8px;height:8px;border-radius:3px;flex:0 0 auto}
+.live-updated{display:flex;align-items:center;gap:7px;margin:12px 0 0;color:var(--muted);font-size:11.5px}
+.livedot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:0 0 auto;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(12,163,12,.4)}50%{opacity:.55;box-shadow:0 0 0 4px rgba(12,163,12,0)}}
+.search-input{width:100%;min-height:44px;padding:0 14px;margin-bottom:12px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit}
+.search-input::placeholder{color:var(--muted)}
+.muted{color:var(--muted)}
+
+/* ---------- kpi kutulari ---------- */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px}
+.tile .lbl{color:var(--muted);font-size:11.5px}
+.tile .val{margin-top:5px;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.tile .note{margin-top:3px;color:var(--muted);font-size:11px}
+
+/* ---------- sutun grafigi ---------- */
+.readout{display:flex;align-items:center;gap:7px;margin:-4px 0 12px;color:var(--ink-2);font-size:12.5px;min-height:18px}
+.readout .key{width:9px;height:9px;border-radius:3px;background:var(--s1);flex:0 0 auto}
+.readout b{font-weight:600;color:var(--ink)}
+.plot{position:relative;padding-left:46px}
+.gridline{position:absolute;left:0;right:0;z-index:0;height:0;border-top:1px solid var(--grid)}
+.gridline span{position:absolute;left:-46px;top:-8px;width:42px;text-align:right;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums}
+.cols{position:relative;display:flex;align-items:flex-end;gap:2px;height:132px;border-bottom:1px solid var(--axis)}
+.col{position:relative;z-index:1;flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:0;align-items:center}
+.col i{display:block;width:100%;max-width:24px;background:var(--s1);border-radius:4px 4px 0 0;transition:background .12s}
+.col.zero i{background:var(--axis)}
+.col.sel i,.col.peak i{background:#7ab3f0}
+.col.sel i{box-shadow:0 0 0 2px var(--surface),0 0 0 3px #7ab3f0}
+.ticks{display:flex;gap:2px;margin-top:6px}
+.ticks span{flex:1 1 0;min-width:0;text-align:center;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums;overflow:hidden}
+
+/* ---------- siralanmis yatay cubuklar ---------- */
+.ranks{display:grid;gap:12px}
+.rank .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.rank .nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .amt{font-size:13.5px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rank .track{margin:6px 0 3px;height:8px;border-radius:4px;background:var(--wash);overflow:hidden}
+.rank .track i{display:block;height:100%;background:var(--s1);border-radius:0 4px 4px 0}
+.rank .note{color:var(--muted);font-size:11.5px}
+
+/* ---------- efsane (categorical) ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:12px}
+.legend i{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+
+/* ---------- tablo goruntusu (her grafigin ikizi) ---------- */
+.tableview{margin-top:13px;border-top:1px solid var(--line);padding-top:11px}
+.tableview[hidden]{display:none}
+.tableview table{font-size:12.5px;font-variant-numeric:tabular-nums}
+.tableview th{text-align:left;color:var(--muted);font-weight:500;padding:5px 8px 5px 0;font-size:11.5px}
+.tableview td{padding:6px 8px 6px 0;border-top:1px solid var(--line);color:var(--ink-2)}
+.tableview td:last-child,.tableview th:last-child{text-align:right;padding-right:0}
+
+/* ---------- liste kartlari (adisyon / masa / bildirim) ---------- */
+.rows{display:grid;gap:9px}
+.row{
+  display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;width:100%;text-align:left;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;
+}
+.row:active{background:var(--surface-2)}
+.row .t1{grid-area:1/1;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .t2{grid-area:2/1;color:var(--muted);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .v1{grid-area:1/2;font-size:15px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.row .v2{grid-area:2/2;font-size:11.5px;white-space:nowrap;text-align:right;color:var(--muted)}
+.row .v2.due{color:var(--warn)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:6px;background:var(--surface-2);color:var(--ink-2);font-size:11px;font-weight:600}
+.badge.critical{color:#f0a3a3;background:rgba(208,59,59,.16)}
+.badge.good{color:#7fd67f;background:rgba(12,163,12,.16)}
+.badge.info{color:#9cc7f2;background:rgba(57,135,229,.16)}
+
+/* ---------- bolumlu secici ---------- */
+.segbar{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.segbar::-webkit-scrollbar{display:none}
+.seg{flex:0 0 auto;padding:8px 13px;min-height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2);font-size:13px}
+.seg.active{background:var(--s1);border-color:var(--s1);color:#06121f;font-weight:600}
+.pane{display:none}
+.pane.active{display:block}
+
+/* ---------- alt sekme cubugu ---------- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px);
+  background:var(--blur2);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+}
+.tabbar button{position:relative;display:grid;justify-items:center;gap:3px;padding:6px 2px;border-radius:12px;color:var(--muted);font-size:10.5px}
+.tabbar button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.active{color:var(--s1)}
+.tabbar button b{position:absolute;top:2px;right:calc(50% - 20px);min-width:16px;height:16px;padding:0 4px;display:grid;place-items:center;border-radius:8px;background:var(--critical);color:#fff;font-size:10px}
+
+/* ---------- alt cekmece ---------- */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);opacity:0;transition:opacity .2s}
+.scrim.open{opacity:1}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:51;max-height:82vh;overflow-y:auto;
+  padding:8px var(--pad) calc(env(safe-area-inset-bottom,0px) + 20px);
+  background:var(--surface);border-radius:20px 20px 0 0;border-top:1px solid var(--line);
+  transform:translateY(100%);transition:transform .24s cubic-bezier(.32,.72,0,1);
+}
+.sheet.open{transform:translateY(0)}
+.sheet .grip{width:38px;height:4px;border-radius:2px;background:#3a3a38;margin:6px auto 14px}
+.sheet .head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:14px}
+.sheet .head h2{font-size:17px}
+.sheet .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sheet label{display:grid;gap:5px;color:var(--muted);font-size:12px}
+.sheet input[type=date],.sheet select{
+  width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface-2);color:var(--ink);font:inherit;min-height:44px;
+}
+.primary{width:100%;min-height:48px;border-radius:14px;background:var(--s1);color:#06121f;font-weight:600;font-size:15px}
+.ghost{width:100%;min-height:44px;border-radius:14px;background:var(--surface-2);color:var(--ink-2);font-size:14px;margin-top:8px}
+.sheet .total{display:flex;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-weight:600}
+
+/* ---------- bildirim baloncugu ---------- */
+.toasts{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--tabbar) + 10px);z-index:60;display:grid;gap:8px;pointer-events:none}
+.toast{
+  display:grid;gap:2px;padding:12px 14px;border-radius:14px;
+  background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--critical);
+  box-shadow:0 12px 30px rgba(0,0,0,.5);animation:rise .22s ease-out;
+}
+.toast b{font-size:13px}
+.toast small{color:var(--muted);font-size:11.5px}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+
+footer{padding:16px var(--pad) 6px;color:var(--muted);font-size:11px;text-align:center}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- genis ekran: ayni modul, iki-uc sutun ---------- */
+@media(min-width:720px){
+  .view{max-width:1080px;margin:0 auto;padding:16px 24px 0}
+  .topbar,.rangebar{padding-left:24px;padding-right:24px}
+  .rangelabel,.err,footer{max-width:1080px;margin-left:auto;margin-right:auto}
+  .tiles{grid-template-columns:repeat(4,1fr)}
+  .cols{height:200px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:start}
+  .grid2>*{margin-bottom:0}
+  .tabbar{
+    left:50%;right:auto;bottom:18px;transform:translateX(-50%);
+    grid-template-columns:repeat(5,auto);gap:4px;padding:6px;
+    border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.55);
+  }
+  .tabbar button{grid-auto-flow:column;align-items:center;gap:8px;padding:10px 16px;font-size:13px}
+  .tabbar button b{position:static;margin-left:2px}
+  .toasts{left:auto;right:24px;bottom:24px;width:340px}
+}

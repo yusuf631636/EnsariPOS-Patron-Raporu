@@ -1,0 +1,19 @@
+{
+  "name": "com.ensaripos.patrondirekt",
+  "displayName": "Patron Direkt",
+  "version": "1.0.0",
+  "description": "EnsariPOS Patron Direkt - SambaPOS'a dogrudan baglanan patron rapor uygulamasi",
+  "private": true,
+  "devDependencies": {
+    "cordova-android": "^15.1.0",
+    "cordova-plugin-networkinterface": "^2.2.0"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-networkinterface": {}
+    }
+  }
+}

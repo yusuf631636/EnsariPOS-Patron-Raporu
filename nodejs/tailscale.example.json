@@ -1,0 +1,6 @@
+{
+  "_nasil_kullanilir": "Bu dosyayi 'tailscale.json' olarak kopyalayip authkey alanini doldurun, sonra Ensari POS Patron'u yeniden baslatin. Detay: README-KURULUM.txt bolum 8. Router'da hicbir port yonlendirmeye GEREK YOKTUR.",
+  "enabled": false,
+  "authkey": "TSKEY_BURAYA",
+  "hostname": "ensari-patron"
+}

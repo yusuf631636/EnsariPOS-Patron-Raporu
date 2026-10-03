@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0f1420">
+<title>Patron Direkt</title>
+<script src="cordova.js"></script>
+<script src="core.js"></script>
+<style>
+:root{--bg:#0f1420;--card:#182033;--card2:#1e2840;--tx:#eef2fb;--mut:#8d99b5;--line:#26314b;
+--gold:#f5b942;--grn:#2fd18b;--red:#ff5d6c;--blu:#4f8dff;--pur:#a77bff;--cyn:#2ec8e6;--org:#ff9a3d}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font:14px/1.35 -apple-system,Segoe UI,Roboto,sans-serif;padding-bottom:30px}
+.hidden{display:none!important}
+/* ---- giriş (PIN) ---- */
+#login{position:fixed;inset:0;background:var(--bg);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#login .logo{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--gold),#d98a12);display:grid;place-items:center;font-weight:800;font-size:34px;color:#1b1300;margin-bottom:12px}
+#login h1{font-size:20px}#login .s{color:var(--mut);font-size:13px;margin:4px 0 2px;text-align:center}
+#login .srv{color:var(--gold);font-size:12px;margin-bottom:14px}
+.pindots{display:flex;gap:12px;margin:14px 0}
+.pindots b{width:14px;height:14px;border-radius:50%;background:var(--line)}.pindots b.on{background:var(--gold)}
+.pad{display:grid;grid-template-columns:repeat(3,76px);gap:12px}
+.pad button{height:64px;border:0;border-radius:16px;background:var(--card);color:var(--tx);font-size:24px;font-weight:700}
+.pad button:active{background:var(--card2)}
+.pad .ok{background:var(--gold);color:#1b1300}
+#loginErr{color:var(--red);font-size:13px;min-height:20px;margin-top:12px;text-align:center;max-width:320px}
+.linkbtn{background:none;border:0;color:var(--gold);font-size:13px;margin-top:16px;text-decoration:underline}
+/* ---- üst ---- */
+.top{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#0f1420 72%,#0f142000);padding:12px 14px 14px;display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#d98a12);display:grid;place-items:center;font-weight:800;color:#1b1300}
+.top h1{font-size:16px;font-weight:700}.top small{display:block;color:var(--mut);font-size:12px;font-weight:400}
+.live{margin-left:auto;font-size:11px;color:var(--grn);display:flex;align-items:center;gap:5px}
+.live.off{color:var(--mut)}
+.live:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.ico{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);display:grid;place-items:center;font-size:15px}
+.out{width:auto;padding:0 10px;font-size:12px;font-weight:600;color:var(--red)}
+/* ---- dönem ---- */
+.pills{display:flex;gap:6px;padding:0 12px 8px;overflow:auto;-webkit-overflow-scrolling:touch}
+.pill{padding:6px 13px;border-radius:20px;border:1px solid var(--line);font-size:12.5px;white-space:nowrap;background:var(--card);color:var(--tx)}
+.pill.on{background:var(--blu);border-color:var(--blu)}
+/* ---- kartlar ---- */
+.wrap{padding:0 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;position:relative;overflow:hidden;min-height:108px}
+.c.tap{cursor:pointer}.c.tap:active{transform:scale(.985)}
+.c.w{grid-column:1/-1}
+.c h3{font-size:12px;font-weight:600;color:var(--mut);display:flex;align-items:center;gap:7px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+.c h3 i{font-style:normal;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px}
+.c.tap:after{content:"›";position:absolute;right:11px;top:9px;color:var(--mut);font-size:18px}
+.big{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.sub{color:var(--mut);font-size:12px;margin-top:2px}
+.up{color:var(--grn);font-weight:700}.dn{color:var(--red);font-weight:700}
+.hero{background:linear-gradient(135deg,#243a6e,#16223f 60%);border-color:#2f4a86}
+.hero .big{font-size:34px}
+.chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:11px;padding:3px 8px;border-radius:20px;background:#ffffff12}
+.spark{display:flex;align-items:flex-end;gap:3px;height:46px;margin-top:10px}
+.spark b{flex:1;background:linear-gradient(180deg,var(--blu),#4f8dff44);border-radius:3px 3px 0 0;min-height:2px}
+.spark b.now{background:var(--gold)}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;gap:8px}
+.row span:first-child{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row b{white-space:nowrap}
+.bar{height:6px;border-radius:4px;background:#ffffff10;margin:3px 0 6px;overflow:hidden}.bar b{display:block;height:100%;border-radius:4px}
+.sec{grid-column:1/-1;color:var(--mut);font-size:11px;font-weight:700;letter-spacing:1px;margin:8px 2px -2px}
+.skel{opacity:.5}.skel .big,.skel .row b{color:transparent;background:#ffffff14;border-radius:5px}
+.foot{grid-column:1/-1;color:var(--mut);font-size:11px;text-align:center;margin:10px 2px 0}
+/* ---- detay ---- */
+.det{position:fixed;inset:0;background:var(--bg);z-index:20;transform:translateX(100%);transition:.25s;overflow:auto}
+.det.on{transform:none}
+.dtop{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.dtop h2{font-size:16px}
+.tbl{margin:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tbl h4{padding:10px 12px;font-size:13px;background:var(--card2)}
+.tbl .row{padding:9px 12px;border-top:1px solid var(--line)}
+.tbl .tot{font-weight:800}.tbl .tot span:first-child{color:var(--tx)}
+.err{margin:12px 14px;background:#5a1f2a;color:#ffd6dc;border-radius:12px;padding:12px;font-size:13px;line-height:1.4}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ -->
+<div id="login">
+  <div class="logo">P</div>
+  <h1>Patron Direkt</h1>
+  <div class="s">Yönetici PIN'inizle girin</div>
+  <div class="srv" id="loginSrv"></div>
+  <div class="pindots" id="pindots"></div>
+  <div class="pad" id="pad"></div>
+  <div id="loginErr"></div>
+  <button class="linkbtn" id="toSetup">Sunucu / bağlantı ayarı</button>
+</div>
+
+<!-- PANO -->
+<div id="app" class="hidden">
+  <div class="top">
+    <div class="logo">P</div>
+    <div><h1 id="rName">Patron Raporu</h1><small id="rWhen">—</small></div>
+    <span class="live off" id="live">Yükleniyor</span>
+    <button class="ico" id="refresh">⟳</button>
+    <button class="ico out" id="logout">Çıkış</button>
+  </div>
+  <div class="pills" id="pills"></div>
+  <div class="wrap" id="cards"></div>
+</div>
+
+<!-- DETAY -->
+<div class="det" id="det">
+  <div class="dtop"><button class="ico" id="detBack">‹</button><h2 id="detTitle"></h2></div>
+  <div id="detBody"></div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var RANGES = [['bugun', 'Bugün'], ['dun', 'Dün'], ['7gun', '7 Gün'], ['ay', 'Bu Ay'], ['gecenay', 'Geçen Ay']];
+  var range = 'bugun', last = null, timer = null;
+
+  if (BG.needsSetup()) { location.replace('kurulum.html'); return; }
+
+  // ---------- biçim
+  function money(n) { n = Math.round(Number(n) || 0); var s = Math.abs(n).toLocaleString('tr-TR'); return (n < 0 ? '-' : '') + s + ' ₺'; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function pct(part, whole) { return whole ? Math.round(part * 100 / whole) : 0; }
+
+  // ---------- giriş (PIN)
+  var pin = '';
+  function dots() { var h = ''; for (var i = 0; i < Math.max(4, pin.length); i++) h += '<b class="' + (i < pin.length ? 'on' : '') + '"></b>'; $('pindots').innerHTML = h; }
+  (function buildPad() {
+    var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', 'ok'];
+    $('pad').innerHTML = keys.map(function (k) {
+      if (k === 'ok') return '<button class="ok" data-k="ok">✓</button>';
+      if (k === 'C') return '<button data-k="C">⌫</button>';
+      return '<button data-k="' + k + '">' + k + '</button>';
+    }).join('');
+    $('pad').addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button') : null; if (!b) return;
+      var k = b.getAttribute('data-k');
+      if (k === 'C') pin = pin.slice(0, -1);
+      else if (k === 'ok') return submitPin();
+      else if (pin.length < 12) pin += k;
+      dots();
+    });
+  })();
+  function submitPin() {
+    if (!pin) return;
+    $('loginErr').textContent = 'Kontrol ediliyor…';
+    BG.userByPin(pin, function (err, u) {
+      pin = ''; dots();
+      if (err) { $('loginErr').textContent = err; return; }
+      if (!u.isAdmin) { $('loginErr').textContent = '"' + u.userName + '" yönetici değil. Patron raporlarını yalnızca yönetici görebilir.'; return; }
+      $('loginErr').textContent = '';
+      BG.setSession(u);
+      showApp();
+    });
+  }
+  function showLogin() {
+    $('app').classList.add('hidden'); $('det').classList.remove('on'); $('login').classList.remove('hidden');
+    $('loginSrv').textContent = '📡 ' + BG.label(); dots();
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+  $('toSetup').onclick = function () { location.href = 'kurulum.html'; };
+  document.addEventListener('keydown', function (e) {
+    if ($('login').classList.contains('hidden')) return;
+    if (e.key >= '0' && e.key <= '9' && pin.length < 12) { pin += e.key; dots(); }
+    else if (e.key === 'Backspace') { pin = pin.slice(0, -1); dots(); }
+    else if (e.key === 'Enter') submitPin();
+  });
+
+  // ---------- pano
+  function showApp() {
+    $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+    $('rName').textContent = 'Patron Raporu';
+    $('pills').innerHTML = RANGES.map(function (r) { return '<button class="pill' + (r[0] === range ? ' on' : '') + '" data-r="' + r[0] + '">' + r[1] + '</button>'; }).join('');
+    $('pills').onclick = function (e) { var b = e.target.closest ? e.target.closest('.pill') : null; if (!b) return; range = b.getAttribute('data-r'); showApp(); };
+    $('logout').onclick = function () { BG.logout(); showLogin(); };
+    $('refresh').onclick = function () { load(true); };
+    load(false);
+    if (timer) clearInterval(timer);
+    timer = setInterval(function () { if (!document.hidden && !$('login').classList.contains('hidden')) load(true); }, 60000);
+  }
+
+  function nowStr() {
+    var d = new Date(), g = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][d.getDay()];
+    var ay = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'][d.getMonth()];
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return g + ' ' + d.getDate() + ' ' + ay + ' · ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  function load(silent) {
+    $('rWhen').textContent = nowStr();
+    $('live').className = 'live off'; $('live').textContent = 'Yükleniyor';
+    if (!silent && !last) renderSkeleton();
+    BG.report(range, function (err, s) {
+      if (err) { $('live').className = 'live off'; $('live').textContent = 'Hata'; renderError(err); return; }
+      last = s; $('live').className = 'live'; $('live').textContent = 'Canlı';
+      render(s);
+    });
+  }
+  function renderSkeleton() {
+    var h = '<div class="c w hero skel"><h3>Ciro</h3><div class="big">····</div></div>';
+    for (var i = 0; i < 4; i++) h += '<div class="c skel"><h3>···</h3><div class="row"><span>···</span><b>···</b></div><div class="row"><span>···</span><b>···</b></div></div>';
+    $('cards').innerHTML = h;
+  }
+  function renderError(err) {
+    $('cards').innerHTML = '<div class="c w"><h3><i style="background:#ff5d6c33">⚠️</i>Veri alınamadı</h3><div class="sub" style="line-height:1.5">' + esc(err) + '</div>' +
+      '<div style="margin-top:10px;display:flex;gap:8px"><button class="pill" id="eRetry">Tekrar dene</button><button class="pill" id="eSetup">Bağlantı ayarı</button></div></div>';
+    $('eRetry').onclick = function () { load(false); };
+    $('eSetup').onclick = function () { location.href = 'kurulum.html'; };
+  }
+
+  function spark(hourMap) {
+    var b = '';
+    for (var h = 8; h <= 23; h++) { var v = hourMap[h] || 0; b += v; }
+    var vals = []; for (var i = 8; i <= 23; i++) vals.push(hourMap[i] || 0);
+    var mx = Math.max.apply(null, vals.concat([1]));
+    var nowH = new Date().getHours();
+    return '<div class="spark">' + vals.map(function (v, i) {
+      var hh = 8 + i; return '<b class="' + (hh === nowH ? 'now' : '') + '" style="height:' + Math.max(2, Math.round(v * 100 / mx)) + '%"></b>';
+    }).join('') + '</div>';
+  }
+
+  function render(s) {
+    var h = '';
+    // HERO — ciro
+    h += '<div class="c w hero tap" data-go="ciro"><h3><i style="background:#f5b94233">💰</i>' + rangeLabel() + ' Ciro</h3>' +
+      '<div class="big">' + money(s.ciro) + '</div>' +
+      '<div class="chips"><span class="chip">' + s.adisyon + ' adisyon</span><span class="chip">Ortalama ' + money(s.ortalama) + '</span>' +
+      (s.bekleyenTutar > 0 ? '<span class="chip">Tahsil edilmemiş ' + money(s.bekleyenTutar) + '</span>' : '') + '</div>' +
+      spark(s.saatlik) + '</div>';
+
+    // ŞU AN
+    h += '<div class="sec">ŞU AN</div>';
+    h += '<div class="c tap" data-go="acik"><h3><i style="background:#ff9a3d33">🍽</i>Açık Masa</h3>' +
+      '<div class="big">' + s.acikMasa + '</div><div class="sub">' + money(s.acikTutar) + ' bekliyor</div></div>';
+    var topPay = s.odemeler[0];
+    h += '<div class="c tap" data-go="odeme"><h3><i style="background:#2fd18b33">💳</i>Ödeme</h3>' +
+      (s.odemeler.length ? s.odemeler.slice(0, 3).map(function (p) { return '<div class="row"><span>' + esc(p.name) + '</span><b>' + money(p.total) + '</b></div>'; }).join('') : '<div class="sub">—</div>') + '</div>';
+
+    // SATIŞ
+    h += '<div class="sec">SATIŞ</div>';
+    h += '<div class="c tap" data-go="urun"><h3><i style="background:#4f8dff33">🥙</i>Çok Satan</h3>' +
+      (s.urunler.length ? s.urunler.slice(0, 3).map(function (p) { return '<div class="row"><span>' + esc(p.name) + '</span><b>' + (p.qty || 0) + '</b></div>'; }).join('') : '<div class="sub">—</div>') + '</div>';
+    h += '<div class="c tap" data-go="personel"><h3><i style="background:#a77bff33">🤵</i>Personel</h3>' +
+      (s.personel.length ? s.personel.slice(0, 3).map(function (p) { return '<div class="row"><span>' + esc(p.name) + '</span><b>' + money(p.total) + '</b></div>'; }).join('') : '<div class="sub">—</div>') + '</div>';
+
+    // KASA
+    var ind = 0; (s.hesaplamalar || []).forEach(function (c) { ind += c.total; });
+    h += '<div class="sec">KASA</div>';
+    h += '<div class="c w tap" data-go="odeme"><h3><i style="background:#2fd18b33">🗄</i>Kasa Durumu</h3>' +
+      (s.odemeler.length ? s.odemeler.map(function (p) {
+        return '<div class="row"><span>' + esc(p.name) + '</span><b>' + money(p.total) + ' · %' + pct(p.total, s.ciro) + '</b></div>' +
+          '<div class="bar"><b style="width:' + pct(p.total, s.ciro) + '%;background:var(--grn)"></b></div>';
+      }).join('') : '<div class="sub">Ödeme kaydı yok</div>') + '</div>';
+    if (s.hesaplamalar && s.hesaplamalar.length)
+      h += '<div class="c w tap" data-go="iskonto"><h3><i style="background:#f5b94233">🏷</i>İndirim / Düzeltme</h3>' +
+        s.hesaplamalar.map(function (c) { return '<div class="row"><span>' + esc(c.name) + '</span><b>' + money(c.total) + '</b></div>'; }).join('') + '</div>';
+
+    h += '<div class="foot">SambaPOS: ' + esc(BG.label()) + ' · bağımsız · son veri ' + new Date().toLocaleTimeString('tr-TR') + '</div>';
+    $('cards').innerHTML = h;
+    $('cards').onclick = function (e) { var c = e.target.closest ? e.target.closest('[data-go]') : null; if (c) openDet(c.getAttribute('data-go')); };
+  }
+  function rangeLabel() { for (var i = 0; i < RANGES.length; i++) if (RANGES[i][0] === range) return RANGES[i][1]; return ''; }
+
+  // ---------- detay
+  function openDet(go) {
+    if (!last) return;
+    var s = last, title = '', body = '';
+    function table(h4, rows, totalRow) {
+      return '<div class="tbl"><h4>' + esc(h4) + '</h4>' + rows + (totalRow || '') + '</div>';
+    }
+    function listRows(arr, valfn) { return arr.length ? arr.map(function (p) { return '<div class="row"><span>' + esc(p.name) + '</span><b>' + valfn(p) + '</b></div>'; }).join('') : '<div class="row"><span>Kayıt yok</span><b></b></div>'; }
+    if (go === 'ciro' || go === 'odeme') {
+      title = go === 'ciro' ? rangeLabel() + ' Ciro' : 'Ödeme / Kasa';
+      body = table('Özet',
+        '<div class="row"><span>Ciro</span><b>' + money(s.ciro) + '</b></div>' +
+        '<div class="row"><span>Adisyon</span><b>' + s.adisyon + '</b></div>' +
+        '<div class="row"><span>Ortalama adisyon</span><b>' + money(s.ortalama) + '</b></div>' +
+        '<div class="row"><span>Açık masa (bekleyen)</span><b>' + money(s.acikTutar) + '</b></div>');
+      body += table('Ödeme Tipleri', listRows(s.odemeler, function (p) { return money(p.total) + ' · %' + pct(p.total, s.ciro); }),
+        '<div class="row tot"><span>Toplam</span><b>' + money(s.ciro) + '</b></div>');
+      if (s.hesaplamalar && s.hesaplamalar.length) body += table('İndirim / Düzeltme', listRows(s.hesaplamalar, function (p) { return money(p.total); }));
+    } else if (go === 'urun') {
+      title = 'Ürün Satışları'; body = table('Çok satan (adet)', listRows(s.urunler, function (p) { return (p.qty || 0) + ' · ' + money(p.total); }));
+    } else if (go === 'personel') {
+      title = 'Personel'; body = table('Satış (kişi)', listRows(s.personel, function (p) { return money(p.total); }));
+    } else if (go === 'iskonto') {
+      title = 'İndirim / Düzeltme'; body = table('Hesaplamalar', listRows(s.hesaplamalar || [], function (p) { return money(p.total); }));
+    } else if (go === 'acik') {
+      title = 'Açık Masalar'; body = table('Özet',
+        '<div class="row"><span>Açık masa</span><b>' + s.acikMasa + '</b></div><div class="row"><span>Bekleyen tutar</span><b>' + money(s.acikTutar) + '</b></div>');
+    } else if (go === 'saat') {
+      title = 'Saatlik Ciro';
+      var rows = ''; for (var hh = 0; hh < 24; hh++) if (s.saatlik[hh]) rows += '<div class="row"><span>' + (hh < 10 ? '0' : '') + hh + ':00</span><b>' + money(s.saatlik[hh]) + '</b></div>';
+      body = table('Saat', rows || '<div class="row"><span>Kayıt yok</span><b></b></div>');
+    }
+    $('detTitle').textContent = title; $('detBody').innerHTML = body; $('det').classList.add('on');
+  }
+  $('detBack').onclick = function () { $('det').classList.remove('on'); };
+
+  // ---------- başla
+  if (BG.session()) showApp(); else showLogin();
+  document.addEventListener('resume', function () { if (!$('login').classList.contains('hidden')) return; if (BG.session()) load(true); else showLogin(); }, false);
+})();
+</script>
+</body>
+</html>

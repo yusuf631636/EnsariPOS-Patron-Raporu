@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1420">
+<title>SambaPOS Raporları — Patron</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#0f1420;--card:#182033;--card2:#1e2840;--tx:#eef2fb;--mut:#8d99b5;--line:#26314b;--gold:#f5b942;--grn:#2fd18b;--red:#ff5d6c;--blu:#4f8dff}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.4 -apple-system,Segoe UI,Roboto,sans-serif;padding-bottom:40px}
+.top{position:sticky;top:0;z-index:5;background:#0f1420;padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#d98a12);display:grid;place-items:center;font-weight:800;color:#1b1300}
+.top h1{font-size:15px}.top a{margin-left:auto;color:var(--mut);text-decoration:none;font-size:13px}
+.wrap{max-width:820px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red)}.dot.on{background:var(--grn)}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 4px}
+.in{width:100%;padding:10px;border-radius:9px;border:1px solid var(--line);background:#0c111c;color:var(--tx);font-size:14px}
+textarea.in{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+.btn{display:inline-block;padding:10px 14px;border:0;border-radius:10px;font-weight:700;font-size:14px;background:var(--gold);color:#1b1300;cursor:pointer}
+.btn2{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+.btn.sm{padding:6px 10px;font-size:12.5px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:7px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:13px;cursor:pointer}
+.chip.on{background:var(--blu);border-color:var(--blu)}
+.err{background:#5a1f2a;color:#ffd6dc;border-radius:10px;padding:10px 12px;font-size:13px;margin:8px 0;display:none;line-height:1.4}
+.ok{color:var(--grn);font-size:12.5px}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-top:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;background:var(--card2)}
+td.num,th.num{text-align:right;white-space:nowrap}
+.tname{font-weight:700;margin:14px 0 2px}
+.muted{color:var(--mut);font-size:12.5px}
+.customrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.customrow b{flex:1}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo">P</div><h1>SambaPOS Raporları</h1><a href="index.html">← Panoya dön</a></div>
+<div class="wrap">
+  <div class="err" id="err"></div>
+
+  <!-- Bağlantı -->
+  <div class="card">
+    <h2><span class="dot" id="connDot"></span>SambaPOS Bağlantısı</h2>
+    <div class="muted" id="connInfo">Yükleniyor…</div>
+    <div id="connForm" style="margin-top:8px">
+      <div class="row">
+        <div><label>Adres</label><input class="in" id="cHost" placeholder="localhost"></div>
+        <div><label>Yönetici kullanıcı</label><input class="in" id="cUser" autocapitalize="off" placeholder="Administrator"></div>
+        <div><label>Şifresi (PIN değil)</label><input class="in" id="cPass" type="password" placeholder="••••••"></div>
+      </div>
+      <div style="margin-top:10px"><button class="btn" id="cSave">Kaydet ve bağlan</button></div>
+      <div class="muted" style="margin-top:8px">SambaPOS'taki bir <b>Yönetici (Admin)</b> kullanıcının adı ve "Şifre" alanı. Rapor çekmek için gerekir; PIN değildir.</div>
+    </div>
+  </div>
+
+  <!-- Raporlar -->
+  <div class="card">
+    <h2>📊 Rapor Seç</h2>
+    <div class="chips" id="repList"></div>
+    <div class="row" style="align-items:flex-end">
+      <div><label>Başlangıç</label><input class="in" id="start" type="date"></div>
+      <div><label>Bitiş</label><input class="in" id="end" type="date"></div>
+      <div style="flex:0 0 auto"><button class="btn" id="run">Çalıştır</button></div>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <!-- Yeni rapor ekle -->
+  <div class="card">
+    <h2>➕ Yeni Rapor Ekle</h2>
+    <div class="muted">SambaPOS'un rapor etiket dilini kullanın. Örnek: <code>[Başlık:50,50]</code> satırı, altına <code>{REPORT TICKET TOTAL}</code> gibi etiketler.</div>
+    <label>Rapor adı</label><input class="in" id="newAd" placeholder="ör. Garson Bahşiş">
+    <label>Şablon</label><textarea class="in" id="newSablon" placeholder="[Özet:60,40]&#10;Ciro|{REPORT TICKET TOTAL}"></textarea>
+    <div style="margin-top:10px"><button class="btn" id="add">Ekle</button></div>
+    <div id="customList" style="margin-top:12px"></div>
+  </div>
+</div>
+<script src="auth-guard.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var reports = [], curId = null;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function err(m){var e=$('err');if(!m){e.style.display='none';return;}e.textContent=m;e.style.display='block';window.scrollTo(0,0);}
+  function isNum(v){return v!==''&&v!=null&&!isNaN(String(v).replace(/[.\s]/g,'').replace(',','.'))&&/[0-9]/.test(String(v));}
+  function api(path, opt){ return fetch(path, Object.assign({credentials:'same-origin'}, opt)).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j&&j.error||('HTTP '+r.status));return j;});}); }
+
+  function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+  $('start').value=today(); $('end').value=today();
+
+  function renderMeta(m){
+    reports = m.reports||[];
+    $('connDot').className='dot'+(m.connected?' on':'');
+    $('connInfo').innerHTML = m.connected ? '<span class="ok">✓ Bağlı</span> · '+esc(m.host) : 'Bağlantı kullanıcısı girilmedi. Aşağıdan girin.';
+    $('repList').innerHTML = reports.map(function(r){return '<button class="chip'+(r.id===curId?' on':'')+'" data-id="'+esc(r.id)+'">'+esc(r.ad)+(r.builtin?'':' ✎')+'</button>';}).join('');
+    $('customList').innerHTML = reports.filter(function(r){return !r.builtin;}).map(function(r){return '<div class="customrow"><b>'+esc(r.ad)+'</b><button class="btn btn2 sm" data-del="'+esc(r.id)+'">Sil</button></div>';}).join('') || '<div class="muted">Henüz özel rapor eklenmedi.</div>';
+  }
+  $('repList').onclick=function(e){var b=e.target.closest&&e.target.closest('[data-id]');if(!b)return;curId=b.getAttribute('data-id');renderMeta({reports:reports,connected:$('connDot').classList.contains('on'),host:''});run();};
+  $('customList').onclick=function(e){var b=e.target.closest&&e.target.closest('[data-del]');if(!b)return;if(!confirm('Rapor silinsin mi?'))return;api('/api/samba/remove',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:b.getAttribute('data-del')})}).then(renderMeta).catch(function(e){err(e.message);});};
+
+  function run(){
+    if(!curId){return;}
+    err(''); $('result').innerHTML='<div class="muted" style="margin-top:10px">Çalıştırılıyor…</div>';
+    api('/api/samba/run?id='+encodeURIComponent(curId)+'&start='+$('start').value+'&end='+$('end').value).then(function(d){
+      var h='';
+      (d.tables||[]).forEach(function(t){
+        h+='<div class="tname">'+esc(t.name||'')+'</div>';
+        if(!t.rows||!t.rows.length){h+='<div class="muted">Kayıt yok.</div>';return;}
+        h+='<table>';
+        if(t.columns&&t.columns.length)h+='<tr>'+t.columns.map(function(c,i){return '<th class="'+(i>0?'num':'')+'">'+esc(c)+'</th>';}).join('')+'</tr>';
+        t.rows.forEach(function(row){h+='<tr>'+row.map(function(c,i){return '<td class="'+(isNum(c)?'num':'')+'">'+esc(c)+'</td>';}).join('')+'</tr>';});
+        h+='</table>';
+      });
+      $('result').innerHTML=h||'<div class="muted" style="margin-top:10px">Bu rapor boş döndü.</div>';
+    }).catch(function(e){$('result').innerHTML='';err(e.message);});
+  }
+  $('run').onclick=run;
+
+  $('cSave').onclick=function(){
+    var host=$('cHost').value.trim(),user=$('cUser').value.trim(),pass=$('cPass').value;
+    if(!user||!pass){err('Kullanıcı adı ve şifre gerekli.');return;}
+    err(''); $('cSave').disabled=true;$('cSave').textContent='Bağlanıyor…';
+    api('/api/samba/conn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({host:host,user:user,pass:pass})})
+      .then(function(m){ $('cPass').value=''; renderMeta(m); if(curId)run(); })
+      .catch(function(e){err(e.message);})
+      .then(function(){$('cSave').disabled=false;$('cSave').textContent='Kaydet ve bağlan';});
+  };
+
+  $('add').onclick=function(){
+    var ad=$('newAd').value.trim(),sablon=$('newSablon').value;
+    if(!ad||!sablon.trim()){err('Rapor adı ve şablonu gerekli.');return;}
+    err(''); api('/api/samba/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ad:ad,sablon:sablon})})
+      .then(function(m){$('newAd').value='';$('newSablon').value='';renderMeta(m);}).catch(function(e){err(e.message);});
+  };
+
+  api('/api/samba/meta').then(function(m){ renderMeta(m); if(reports[0]){curId=reports[0].id;renderMeta(m);run();} }).catch(function(e){err(e.message);});
+})();
+</script>
+</body>
+</html>

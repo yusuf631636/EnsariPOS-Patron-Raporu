@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Patron">
+<title>Ensari POS Patron</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/p3.css?v=240">
+<script>try{var e=document.documentElement;e.dataset.theme=localStorage.getItem('patron-theme')||'dark';e.dataset.accent=JSON.parse(localStorage.getItem('p3-accent')||'"mavi"');e.dataset.density=JSON.parse(localStorage.getItem('p3-density')||'"rahat"')}catch(x){}</script>
+</head>
+<body>
+<!-- Patron 2.3 paneli (30.09.2026: hedef, tahmin, canli akis, kasa sayimi, ay takvimi, vurgu rengi). 2.2 - Ana Sayfa / Canli / Raporlar (21 rapor + detaya inme) / Fiyat / Bildirim.
+     Adresler: #ana, #canli, #rapor, #rapor/<tur>, #fiyat, #bildirim (telefonun geri tusu calisir). Eski panel: /klasik. -->
+<header class="bar">
+  <div class="t" id="barTitle"></div>
+  <div class="r">
+    <span class="live off" id="live"><i></i><span>…</span></span>
+    <button class="ib" id="refresh" title="Yenile" aria-label="Yenile">⟳</button>
+    <button class="ib" id="settings" title="Ayarlar" aria-label="Ayarlar">⚙</button>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="v-ana"><div id="homeBox"></div></section>
+  <section class="view" id="v-canli"><div class="seg" id="liveTabs" style="margin-bottom:12px"></div><div id="liveBox"></div></section>
+  <section class="view" id="v-rapor"><div id="repMenu"></div><div id="repPage" class="hide"></div></section>
+  <section class="view" id="v-fiyat">
+    <div class="seg" id="priceTabs" style="margin-bottom:12px"><button data-p="list" class="on">🏷 Fiyat değiştir</button><button data-p="bulk">📈 Toplu zam / indirim</button><button data-p="hist">🕘 Fiyat geçmişi</button></div>
+    <div id="p-list">
+      <input id="mSearch" class="search" type="search" placeholder="🔍  Ürün ara…">
+      <div class="seg" id="mGroups" style="margin-bottom:12px"></div>
+      <div class="card" id="mList"><p class="empty">Yükleniyor…</p></div>
+      <p class="note">Değişiklik hemen SambaPOS veritabanına yazılır. Terminallerde görünmesi için SambaPOS'ta menüyü yenileyin.</p>
+    </div>
+    <div id="p-bulk" class="hide">
+      <div class="card">
+        <h2>Toplu zam / indirim <small>önce önizleme gösterilir</small></h2>
+        <div class="custom" style="margin-top:0">
+          <label>Kategori<select id="bGroup"></select></label>
+          <label>Yüzde (%)<input id="bPct" type="number" inputmode="decimal" step="0.5" placeholder="ör. 10 ya da -5"></label>
+          <label>Yuvarla<select id="bRound"><option value="0">Yok</option><option value="0.5">0,50 ₺</option><option value="1">1 ₺</option><option value="5" selected>5 ₺</option><option value="10">10 ₺</option></select></label>
+          <label>Fiyat türü<select id="bTag"></select></label>
+          <button class="btnp" id="bPreview">Önizle</button>
+        </div>
+        <div id="bOut"></div>
+      </div>
+    </div>
+    <div id="p-hist" class="hide"><div class="card"><h2>Fiyat değişimleri <select id="hDays" style="min-height:32px;padding:3px 8px"><option value="30">30 gün</option><option value="90" selected>90 gün</option><option value="180">180 gün</option><option value="365">365 gün</option></select></h2><div id="hBox"></div></div></div>
+  </section>
+  <section class="view" id="v-bildirim"><div class="card" id="pushBox"></div><div class="seg" id="noteTabs" style="margin-bottom:6px"></div><div id="noteBox"></div></section>
+</main>
+
+<nav class="nav" id="nav">
+  <button data-v="ana"><b>🏠</b>Ana Sayfa</button>
+  <button data-v="canli"><b>🍽</b>Canlı</button>
+  <button data-v="rapor"><b>📊</b>Raporlar</button>
+  <button data-v="fiyat"><b>🏷</b>Fiyat</button>
+  <button data-v="bildirim"><b>🔔</b>Bildirim<span class="cnt hide" id="noteCnt">0</span></button>
+</nav>
+
+<script src="/auth-guard.js?v=2"></script>
+<script src="/p3.js?v=240"></script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {})); }</script>
+</body>
+</html>

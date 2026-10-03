@@ -1,0 +1,15 @@
+{
+  "appName": "Ensari POS Patron",
+  "server": "DESKTOP-7IVJ7HN",
+  "database": "SAMBAPOS5",
+  "user": "sa",
+  "password": "DEGISTIR_BURAYA",
+  "options": {
+    "encrypt": false,
+    "trustServerCertificate": true
+  },
+  "port": 8787,
+  "publicUrl": "",
+  "cloudActivationKey": "",
+  "cloudServerUrl": "https://app.ornek-alanadi.com"
+}

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Patron">
+<title>Ensari POS Patron</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/patron.css?v=2">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('patron-theme')||'dark'}catch(e){}</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span id="conn" class="dot wait" role="img" aria-label="Baglanti kontrol ediliyor"></span><h1 id="appName">Ensari POS Patron</h1></div>
+  <button id="refresh" class="icon-btn" aria-label="Yenile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-.6 4"/><path d="M20 5v6h-6"/></svg></button>
+  <button id="bell" class="icon-btn" aria-label="Bildirimler"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 7-2 7h16s-2-2-2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><b id="bellCount" hidden>0</b></button>
+  <button id="themeToggleBtn" class="icon-btn" aria-label="Tema değiştir" style="font-size:17px">🌙</button>
+  <button id="settingsBtn" class="icon-btn" aria-label="Ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></button>
+</header>
+
+<div class="rangebar" role="group" aria-label="Tarih araligi">
+  <button class="chip active" data-range="today">Bugün</button>
+  <button class="chip" data-range="yesterday">Dün</button>
+  <button class="chip" data-range="week">Son 7 gün</button>
+  <button class="chip" data-range="month">Bu ay</button>
+  <button class="chip" data-range="custom">Özel…</button>
+  <button class="chip hour-chip" id="hourChip">Saat: tümü</button>
+</div>
+<p id="rangeLabel" class="rangelabel">Yükleniyor…</p>
+<div id="err" class="err" hidden></div>
+
+<main id="app">
+
+<!-- ============ ÖZET ============ -->
+<section id="view-ozet" class="view active" aria-label="Özet">
+  <div class="hero">
+    <div class="lbl">Toplam ciro</div>
+    <p id="heroSales" class="fig">—</p>
+    <div id="heroDelta" class="delta flat"><span>Önceki dönem karşılaştırması bekleniyor</span></div>
+    <div id="heroPayments" class="hero-pay"></div>
+    <p id="heroUpdated" class="live-updated" hidden><i class="livedot"></i>Güncelleniyor…</p>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="lbl">Tahsilat</div><div id="kpiCollected" class="val">—</div><div class="note">Ödeme hareketleri</div></div>
+    <div class="tile"><div class="lbl">Adisyon</div><div id="kpiTickets" class="val">—</div><div class="note">Kapalı fiş</div></div>
+    <div class="tile"><div class="lbl">Ortalama sepet</div><div id="kpiAverage" class="val">—</div><div class="note">Fiş başına</div></div>
+    <div class="tile"><div class="lbl">Açık bakiye</div><div id="kpiRemaining" class="val">—</div><div class="note">Tahsil edilmemiş</div></div>
+  </div>
+
+  <button id="openLive" class="row" type="button">
+    <span class="t1">Şu an açık</span>
+    <span id="liveNote" class="t2">Yükleniyor…</span>
+    <span id="liveAmount" class="v1">—</span>
+    <span class="v2 linkbtn">Detay →</span>
+  </button>
+
+  <div class="card" style="margin-top:11px">
+    <div class="head"><h2>Saatlik yoğunluk</h2><button class="linkbtn" data-table="tblHourly">Tablo</button></div>
+    <div id="hourlyReadout" class="readout"></div>
+    <div id="hourlyChart"></div>
+    <div id="tblHourly" class="tableview" hidden></div>
+  </div>
+
+  <div id="dailyCard" class="card" hidden>
+    <div class="head"><h2>Günlük ciro</h2><button class="linkbtn" data-table="tblDaily">Tablo</button></div>
+    <div id="dailyReadout" class="readout"></div>
+    <div id="dailyChart"></div>
+    <div id="tblDaily" class="tableview" hidden></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="head"><h2>En çok satan ürünler</h2><button class="linkbtn" data-goto="satis:urunler">Tümü</button></div>
+      <div id="topProducts" class="ranks"></div>
+    </div>
+
+    <div class="card">
+      <div class="head"><h2>Ödeme dağılımı</h2><button class="linkbtn" data-table="tblPayMix">Tablo</button></div>
+      <div id="payLegend" class="legend"></div>
+      <div id="payMix" class="ranks"></div>
+      <div id="tblPayMix" class="tableview" hidden></div>
+    </div>
+  </div>
+
+  <button id="share" class="primary" style="margin:4px 0 8px">Özeti paylaş</button>
+  <button id="csv" class="ghost">CSV indir</button>
+</section>
+
+<!-- ============ SATIŞ ============ -->
+<section id="view-satis" class="view" aria-label="Satış">
+  <div class="segbar" role="tablist">
+    <button class="seg active" data-pane="pane-urunler">Ürünler</button>
+    <button class="seg" data-pane="pane-personel">Personel</button>
+    <button class="seg" data-pane="pane-departman">Departman</button>
+    <button class="seg" data-pane="pane-adisyon">Adisyonlar</button>
+  </div>
+  <div id="pane-urunler" class="pane active"><div class="card"><div class="head"><h2>Ürün satışları</h2><button class="linkbtn" data-table="tblProducts">Tablo</button></div><div id="productRanks" class="ranks"></div><div id="tblProducts" class="tableview" hidden></div></div></div>
+  <div id="pane-personel" class="pane"><div class="card"><div class="head"><h2>Personel cirosu</h2><button class="linkbtn" data-table="tblUsers">Tablo</button></div><div id="userRanks" class="ranks"></div><div id="tblUsers" class="tableview" hidden></div></div></div>
+  <div id="pane-departman" class="pane"><div class="card"><div class="head"><h2>Departman satışları</h2><button class="linkbtn" data-table="tblDepts">Tablo</button></div><div id="deptRanks" class="ranks"></div><div id="tblDepts" class="tableview" hidden></div></div></div>
+  <div id="pane-adisyon" class="pane"><div class="head"><h2>Adisyonlar</h2><span id="ticketCount" class="sub"></span></div><div id="ticketRows" class="rows"></div></div>
+</section>
+
+<!-- ============ AÇIK ============ -->
+<section id="view-acik" class="view" aria-label="Açık adisyonlar">
+  <div class="segbar" role="tablist">
+    <button class="seg active" data-pane="pane-masa">Masalar</button>
+    <button class="seg" data-pane="pane-bekleyen">Bekleyen paketler</button>
+    <button class="seg" data-pane="pane-yolda">Yoldaki paketler</button>
+  </div>
+  <div class="tiles" style="grid-template-columns:repeat(3,1fr)">
+    <div class="tile"><div class="lbl">Açık masa</div><div id="openTableCount" class="val">—</div><div id="openTableAmount" class="note">—</div></div>
+    <div class="tile"><div class="lbl">Bekleyen</div><div id="pendingPackCount" class="val">—</div><div id="pendingPackAmount" class="note">—</div></div>
+    <div class="tile"><div class="lbl">Yolda</div><div id="enroutePackCount" class="val">—</div><div id="enroutePackAmount" class="note">—</div></div>
+  </div>
+  <div id="pane-masa" class="pane active"><div id="tableRows" class="rows"></div></div>
+  <div id="pane-bekleyen" class="pane"><div id="pendingRows" class="rows"></div></div>
+  <div id="pane-yolda" class="pane"><div id="enrouteRows" class="rows"></div></div>
+  <p class="rangelabel" style="margin-left:0">Açık adisyonlar tarih filtresinden bağımsızdır; 30 saniyede bir yenilenir.</p>
+</section>
+
+<!-- ============ KASA ============ -->
+<section id="view-kasa" class="view" aria-label="Kasa">
+  <div class="tiles">
+    <div class="tile"><div class="lbl">Satış</div><div id="cashSales" class="val">—</div></div>
+    <div class="tile"><div class="lbl">Tahsilat</div><div id="cashCollected" class="val">—</div></div>
+    <div class="tile"><div class="lbl">Adisyon</div><div id="cashTickets" class="val">—</div></div>
+    <div class="tile"><div class="lbl">Açık bakiye</div><div id="cashRemaining" class="val">—</div></div>
+  </div>
+  <div class="segbar" role="tablist">
+    <button class="seg active" data-pane="pane-odeme">Ödemeler</button>
+    <button class="seg" data-pane="pane-fiyat-guncelle">Fiyat güncelle</button>
+    <button class="seg" data-pane="pane-fiyat-gecmis">Fiyat geçmişi</button>
+  </div>
+
+  <div id="pane-odeme" class="pane active">
+    <div class="card">
+      <div class="head"><h2>Ödeme türleri</h2><button class="linkbtn" data-table="tblPayments">Tablo</button></div>
+      <div id="payLegend2" class="legend"></div>
+      <div id="paymentRanks" class="ranks"></div>
+      <div id="tblPayments" class="tableview" hidden></div>
+    </div>
+  </div>
+
+  <div id="pane-fiyat-guncelle" class="pane">
+    <div class="card">
+      <div class="head"><h2>Ürün fiyatı güncelle</h2></div>
+      <input id="menuSearch" type="search" placeholder="Ürün ara…" class="search-input">
+      <p class="muted" style="margin:8px 0 12px;font-size:11.5px">Değişiklik hemen veritabanına yazılır. SambaPOS ekranında görünmesi için terminalde menüyü yenilemeniz gerekebilir.</p>
+      <div id="menuRows" class="rows"></div>
+    </div>
+  </div>
+
+  <div id="pane-fiyat-gecmis" class="pane">
+    <div class="card">
+      <div class="head"><h2>Fiyat değişimleri</h2>
+        <label class="sub" style="color:var(--muted)">Son
+          <select id="priceDays" style="min-height:34px;padding:5px 8px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit">
+            <option value="30">30</option><option value="90" selected>90</option><option value="180">180</option><option value="365">365</option>
+          </select> gün</label>
+      </div>
+      <div id="priceRows" class="rows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BİLDİRİM ============ -->
+<section id="view-bildirim" class="view" aria-label="Bildirimler">
+  <div class="segbar" role="tablist">
+    <button class="seg active" data-filter="all">Tümü</button>
+    <button class="seg" data-filter="iptal">İptal</button>
+    <button class="seg" data-filter="iade">İade</button>
+    <button class="seg" data-filter="gun">Gün başı / sonu</button>
+  </div>
+  <div id="noteRows" class="rows"></div>
+</section>
+
+</main>
+
+<nav class="tabbar" aria-label="Bölümler">
+  <button class="active" data-view="ozet"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20v-7"/><path d="M12 20V5"/><path d="M18 20v-10"/></svg>Özet</button>
+  <button data-view="satis"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9.5 8.5h5"/><path d="M9.5 12.5h5"/></svg>Satış</button>
+  <button data-view="acik"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 10h18"/><path d="M9 10v10"/></svg>Açık</button>
+  <button data-view="kasa"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/><path d="M6 15h4"/></svg>Kasa</button>
+  <button data-view="bildirim"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 7-2 7h16s-2-2-2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Bildirim<b id="tabBadge" hidden>0</b></button>
+</nav>
+
+<div id="scrim" class="scrim" hidden></div>
+<div id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="grip"></div>
+  <div id="sheetBody"></div>
+</div>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<footer>Veri kaynağı: SQL Server / SAMBAPOS5 · <a href="/masaustu" style="color:var(--muted)">masaüstü görünüm</a></footer>
+
+<script src="/auth-guard.js?v=2"></script>
+<script src="/patron.js?v=2"></script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {})); }</script>
+</body>
+</html>

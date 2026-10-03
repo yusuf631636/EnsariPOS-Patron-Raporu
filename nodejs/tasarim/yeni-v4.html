@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patron v4 Taslak</title>
+<style>
+:root{--bg:#0f1420;--card:#182033;--card2:#1e2840;--tx:#eef2fb;--mut:#8d99b5;--line:#26314b;
+--gold:#f5b942;--grn:#2fd18b;--red:#ff5d6c;--blu:#4f8dff;--pur:#a77bff;--cyn:#2ec8e6;--org:#ff9a3d}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.35 -apple-system,Segoe UI,Roboto,sans-serif;padding-bottom:30px}
+.top{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#0f1420 70%,#0f142000);padding:12px 14px 14px;display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#d98a12);display:grid;place-items:center;font-weight:800;color:#1b1300}
+.top h1{font-size:16px;font-weight:700}.top small{display:block;color:var(--mut);font-size:12px;font-weight:400}
+.live{margin-left:auto;font-size:11px;color:var(--grn);display:flex;align-items:center;gap:5px}
+.live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 8px var(--grn)}
+.ico{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);display:grid;place-items:center;font-size:15px}
+.out{width:auto;padding:0 10px;font-size:12px;font-weight:600;color:var(--red)}
+.wrap{padding:0 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;position:relative;overflow:hidden;min-height:118px}
+.c:active{transform:scale(.98)}
+.c.w{grid-column:1/-1}
+.c h3{font-size:12px;font-weight:600;color:var(--mut);display:flex;align-items:center;gap:7px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+.c h3 i{font-style:normal;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:13px}
+.c:after{content:"›";position:absolute;right:11px;top:9px;color:var(--mut);font-size:18px}
+.big{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.sub{color:var(--mut);font-size:12px;margin-top:2px}
+.up{color:var(--grn);font-weight:700}.dn{color:var(--red);font-weight:700}
+.hero{background:linear-gradient(135deg,#243a6e,#16223f 60%);border-color:#2f4a86}
+.hero .big{font-size:34px}
+.chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:11px;padding:3px 8px;border-radius:20px;background:#ffffff12}
+.spark{display:flex;align-items:flex-end;gap:3px;height:46px;margin-top:10px}
+.spark b{flex:1;background:linear-gradient(180deg,var(--blu),#4f8dff44);border-radius:3px 3px 0 0}
+.spark b.now{background:var(--gold)}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.row span:first-child{color:var(--mut)}
+.bar{height:6px;border-radius:4px;background:#ffffff10;margin:3px 0 6px;overflow:hidden}.bar b{display:block;height:100%;border-radius:4px}
+.week{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:6px}
+.week div{flex:1;text-align:center;font-size:10px;color:var(--mut)}
+.week div b{display:block;border-radius:4px 4px 0 0;margin-bottom:3px}
+.ntf{font-size:12px;padding:6px 0;border-top:1px solid var(--line);display:flex;gap:8px}
+.ntf:first-of-type{border-top:0}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}
+.badge{position:absolute;right:28px;top:10px;background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:1px 7px}
+.sec{grid-column:1/-1;color:var(--mut);font-size:11px;font-weight:700;letter-spacing:1px;margin:8px 2px -2px}
+.act{display:flex;align-items:center;gap:10px;min-height:0}
+.act .big{font-size:15px}
+/* detay */
+.det{position:fixed;inset:0;background:var(--bg);z-index:20;transform:translateX(100%);transition:.25s;overflow:auto}
+.det.on{transform:none}
+.dtop{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg)}
+.dtop h2{font-size:16px}
+.pills{display:flex;gap:6px;padding:12px 14px;overflow:auto}
+.pill{padding:6px 12px;border-radius:20px;border:1px solid var(--line);font-size:12px;white-space:nowrap}
+.pill.on{background:var(--blu);border-color:var(--blu)}
+.tbl{margin:0 14px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tbl h4{padding:10px 12px;font-size:13px;background:var(--card2)}
+.tbl .row{padding:9px 12px;border-top:1px solid var(--line)}
+.tbl .tot{font-weight:800}.tbl .tot span:first-child{color:var(--tx)}
+</style></head><body>
+
+<div class="top"><div class="logo">P</div><div><h1>Öz Urfa Kebap<small>Perşembe 2 Ekim · 21:47</small></h1></div>
+<span class="live">Canlı</span><button class="ico">⟳</button><button class="ico out">Çıkış</button></div>
+
+<div class="wrap">
+ <div class="c w hero" onclick="go('Ciro')"><h3><i style="background:#f5b94233">💰</i>Bugünkü Ciro</h3>
+  <div class="big">48.650 ₺</div>
+  <div class="chips"><span class="chip">Dün bu saat <b class="up">▲ %12</b></span><span class="chip">Geçen hafta <b class="up">▲ %4</b></span><span class="chip">142 adisyon</span></div>
+  <div class="spark"><b style="height:10%"></b><b style="height:18%"></b><b style="height:42%"></b><b style="height:70%"></b><b style="height:55%"></b><b style="height:30%"></b><b style="height:25%"></b><b style="height:48%"></b><b style="height:88%"></b><b style="height:100%"></b><b style="height:76%"></b><b class="now" style="height:40%"></b></div>
+ </div>
+
+ <div class="sec">ŞU AN</div>
+ <div class="c" onclick="go('Açık Masalar')"><h3><i style="background:#ff9a3d33">🍽</i>Açık Masa</h3>
+  <div class="big">14 <span style="font-size:13px;color:var(--mut)">/ 32</span></div><div class="sub">9.840 ₺ bekliyor</div><div class="sub">En uzun: <b style="color:var(--org)">Masa 7 · 1s 42dk</b></div></div>
+ <div class="c" onclick="go('Paket Servis')"><h3><i style="background:#2ec8e633">🛵</i>Paket</h3>
+  <div class="row"><span>Bekleyen</span><b style="color:var(--org)">3</b></div><div class="row"><span>Yolda</span><b style="color:var(--cyn)">5</b></div><div class="row"><span>Teslim</span><b>41</b></div></div>
+
+ <div class="sec">KASA</div>
+ <div class="c w" onclick="go('Kasa')"><h3><i style="background:#2fd18b33">🗄</i>Kasa Durumu</h3>
+  <div class="row"><span>Nakit</span><b>21.300 ₺</b></div><div class="bar"><b style="width:44%;background:var(--grn)"></b></div>
+  <div class="row"><span>Kredi Kartı</span><b>19.850 ₺</b></div><div class="bar"><b style="width:41%;background:var(--blu)"></b></div>
+  <div class="row"><span>Yemek Kartı</span><b>4.100 ₺</b></div><div class="bar"><b style="width:8%;background:var(--pur)"></b></div>
+  <div class="row"><span>Müşteri Hesabı</span><b>3.400 ₺</b></div><div class="bar"><b style="width:7%;background:var(--org)"></b></div></div>
+
+ <div class="c" onclick="go('Ürün Satış')"><h3><i style="background:#4f8dff33">🥙</i>Çok Satan</h3>
+  <div class="row"><span>Adana Dürüm</span><b>64</b></div><div class="row"><span>Urfa Porsiyon</span><b>51</b></div><div class="row"><span>Ayran</span><b>118</b></div></div>
+ <div class="c" onclick="go('Personel')"><h3><i style="background:#a77bff33">🤵</i>Personel</h3>
+  <div class="row"><span>Ahmet</span><b>14.200</b></div><div class="row"><span>Mehmet</span><b>11.050</b></div><div class="row"><span>Kasa</span><b>9.800</b></div></div>
+
+ <div class="c" onclick="go('İkram İade Zayi')"><span class="badge">5</span><h3><i style="background:#ff5d6c33">🎁</i>İkram/İade</h3>
+  <div class="row"><span>İkram</span><b>3 · 270 ₺</b></div><div class="row"><span>İade</span><b class="dn">2 · 410 ₺</b></div><div class="row"><span>Zayi</span><b>0</b></div></div>
+ <div class="c" onclick="go('İskonto')"><h3><i style="background:#f5b94233">🏷</i>İndirim</h3>
+  <div class="big" style="font-size:19px">-640 ₺</div><div class="sub">İskonto 520 · Yuvarlama 120</div><div class="sub">İptal adisyon: <b class="dn">1</b></div></div>
+
+ <div class="sec">GEÇMİŞ</div>
+ <div class="c w" onclick="go('Haftalık')"><h3><i style="background:#2ec8e633">📅</i>Bu Hafta / Geçen Hafta</h3>
+  <div class="week">
+   <div><b style="height:38px;background:var(--blu)"></b>Pzt</div><div><b style="height:30px;background:var(--blu)"></b>Sal</div><div><b style="height:44px;background:var(--blu)"></b>Çar</div><div><b style="height:58px;background:var(--gold)"></b>Per</div><div><b style="height:4px;background:#ffffff15"></b>Cum</div><div><b style="height:4px;background:#ffffff15"></b>Cmt</div><div><b style="height:4px;background:#ffffff15"></b>Paz</div>
+  </div><div class="sub">Bu hafta 168.400 ₺ · geçen hafta aynı gün 151.900 ₺ <b class="up">▲ %11</b></div></div>
+
+ <div class="c" onclick="go('Gün Sonu')"><h3><i style="background:#4f8dff33">🌗</i>Gün Sonu</h3><div class="sub">Dün</div><div class="big" style="font-size:19px">52.300 ₺</div><div class="sub">Günbaşı 09:12 · Ahmet</div></div>
+ <div class="c" onclick="go('Saatlik')"><h3><i style="background:#a77bff33">🕔</i>Yoğun Saat</h3><div class="big" style="font-size:19px">20:00</div><div class="sub">7.900 ₺ · 21 adisyon</div></div>
+
+ <div class="c w" onclick="go('Bildirimler')"><span class="badge">3</span><h3><i style="background:#ff5d6c33">🔔</i>Bildirimler</h3>
+  <div class="ntf"><span class="dot" style="background:var(--red)"></span><div><b>Adisyon iptal</b> · #1284 Masa 3 · Mehmet<div class="sub">21:31</div></div></div>
+  <div class="ntf"><span class="dot" style="background:var(--org)"></span><div><b>İade</b> · Adana Dürüm · "soğuk geldi"<div class="sub">21:12</div></div></div>
+  <div class="ntf"><span class="dot" style="background:var(--grn)"></span><div><b>Günbaşı yapıldı</b> · Ahmet<div class="sub">09:12</div></div></div></div>
+
+ <div class="sec">İŞLEM</div>
+ <div class="c act" onclick="go('Fiyat Değiştir')"><h3 style="margin:0"><i style="background:#2fd18b33">✏️</i></h3><div><div class="big">Fiyat Değiştir</div><div class="sub">Tek ürün / toplu zam</div></div></div>
+ <div class="c act" onclick="go('Tüm Raporlar')"><h3 style="margin:0"><i style="background:#4f8dff33">📑</i></h3><div><div class="big">Tüm Raporlar</div><div class="sub">14 rapor + SambaPOS raporları</div></div></div>
+ <div class="c w act" style="min-height:0;cursor:default"><div class="sub">Lisans: <b class="up">Aktif</b> · bitiş 12.08.2027 · son veri 15 sn önce</div></div>
+</div>
+
+<div class="det" id="det"><div class="dtop"><button class="ico" onclick="det.classList.remove('on')">‹</button><h2 id="dt">Kasa</h2><button class="ico" style="margin-left:auto;width:auto;padding:0 10px;font-size:12px">PDF</button></div>
+ <div class="pills"><span class="pill on">Bugün</span><span class="pill">Dün</span><span class="pill">7 gün</span><span class="pill">Bu ay</span><span class="pill">Geçen ay</span><span class="pill">Özel…</span></div>
+ <div class="tbl"><h4>Ödeme Tipleri</h4><div class="row"><span>Nakit</span><b>21.300 ₺ · %44</b></div><div class="row"><span>Kredi Kartı</span><b>19.850 ₺ · %41</b></div><div class="row"><span>Yemek Kartı</span><b>4.100 ₺ · %8</b></div><div class="row"><span>Müşteri Hesabı</span><b>3.400 ₺ · %7</b></div><div class="row tot"><span>Toplam</span><b>48.650 ₺</b></div></div>
+ <div class="tbl"><h4>Giderler</h4><div class="row"><span>Muhtelif harcama</span><b>850 ₺</b></div><div class="row tot"><span>Kasada olması gereken nakit</span><b>20.450 ₺</b></div></div>
+</div>
+<script>const det=document.getElementById('det');function go(t){document.getElementById('dt').textContent=t;det.classList.add('on')}</script>
+</body></html>
